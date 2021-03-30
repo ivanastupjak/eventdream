@@ -6,6 +6,7 @@ const Hash=use("Hash")
 
 
 class AuthController {
+  //Test
   async registerUser({request,response}){
 
     let registrationData=sanitize(request.post(),{
