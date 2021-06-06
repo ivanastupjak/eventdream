@@ -11,8 +11,8 @@ class OrganisationSchema extends Schema {
       table.string('password', 60).notNullable()
       table.string('organisation_name', 50).notNullable()
       table.string('oib',11).notNullable().unique()
-      table.string('adresa',50).notNullable()
-      table.string('mjesto',20).notNullable()
+      table.string('adress',50).notNullable()
+      table.string('city',20).notNullable()
       table.timestamps()
     })
   }

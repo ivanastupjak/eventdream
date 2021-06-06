@@ -20,4 +20,6 @@ Route.post('/','AuthController.registerUser')
 Route.group(()=> {
   Route.post('/register', 'AuthController.registerUser')
   Route.post('/login', 'AuthController.loginUser')
+  Route.post('/registerOrganisation','AuthController.registerOrganisation')
+  Route.post('/loginOrganisation', 'AuthController.loginOrganisation')
 }).prefix('/api/auth')
