@@ -1,24 +1,23 @@
 'use strict'
-const User=use('App/Models/User')
+const User = use('App/Models/User')
 
 class GetUser {
 
-  async handle (ctx , next) {
+  async handle(ctx, next) {
     // call next to advance the request
-    const authHeader=ctx.auth.getAuthHeader()
+    const authHeader = ctx.auth.getAuthHeader()
 
-    if(!authHeader){
+    if (!authHeader) {
       return ctx.response.badRequest("Invalid Token")
     }
 
-    let jwtData=await ctx.auth._verifyToken(authHeader)
+    let jwtData = await ctx.auth._verifyToken(authHeader)
 
-    const user=await User.query().where('id',jwtData.uid).first()
+    const user = await User.query().where('id', jwtData.uid).first()
 
-    if(user&&jwtData.data.type==="user"){
-      ctx.user=user
-    }
-    else {
+    if (user && jwtData.data.type === "user") {
+      ctx.user = user
+    } else {
       return ctx.response.notFound("User not found")
     }
 

@@ -90,7 +90,7 @@ class AuthController {
       })
     }
 
-    const accessToken = await auth.generate(user,{type:'user'})
+    const accessToken = await auth.generate(user, {type: 'user'})
 
     return response.ok({
       user,
@@ -139,8 +139,7 @@ class AuthController {
   }
 
   async loginOrganisation({request, response, auth}) {
-    const loginData = sanitize(request.post(), {
-    })
+    const loginData = request.post()
 
     const validation = await validate(loginData, {
       oib: "required",
@@ -171,7 +170,7 @@ class AuthController {
       })
     }
 
-    const accessToken = await auth.generate(organisation,{type:"organisation"})
+    const accessToken = await auth.generate(organisation, {type: "organisation"})
 
     return response.ok({
       organisation,

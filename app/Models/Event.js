@@ -12,6 +12,11 @@ class Event extends Model {
   poster(){
     this.hasOne("App/Models/Poster")
   }
+
+  organisation(){
+    this.belongsTo("App/Models/Organisation",'organisation_id','id')
+  }
+
 }
 
 module.exports = Event
