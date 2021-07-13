@@ -15,11 +15,17 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
-
-Route.post('/','AuthController.registerUser')
 Route.group(()=> {
   Route.post('/register', 'AuthController.registerUser')
   Route.post('/login', 'AuthController.loginUser')
   Route.post('/registerOrganisation','AuthController.registerOrganisation')
   Route.post('/loginOrganisation', 'AuthController.loginOrganisation')
 }).prefix('/api/auth')
+
+Route.group(()=>{
+  Route.post('/create', 'EventController.addEvent').middleware(['getOrganisation'])
+  Route.post('/edit/:event_id', 'EventController.editEvent').middleware(['getOrganisation'])
+  Route.delete('/delete/:event_id', 'EventController.deleteEvent').middleware(['getOrganisation'])
+  Route.get('/all','EventController.getEvents')
+  Route.post('/confirmArrival','EventController')
+}).prefix('/api/event')

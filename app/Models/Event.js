@@ -10,11 +10,15 @@ class Event extends Model {
   }
 
   poster(){
-    this.hasOne("App/Models/Poster")
+    return this.hasOne("App/Models/Poster")
   }
 
-  organisation(){
-    this.belongsTo("App/Models/Organisation",'organisation_id','id')
+  organisations(){
+    return this.belongsTo("App/Models/Organisation",'organisation_id','id')
+  }
+
+  users(){
+    return this.belongsToMany('App/Models/User').pivotModel('App/Models/EventUser')
   }
 
 }
