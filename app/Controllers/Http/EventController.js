@@ -111,22 +111,22 @@ class EventController {
       })
     }
 
-    if(!eventPoster.moved()){
+    if (!eventPoster.moved()) {
       return eventPoster.error()
     }
 
-    fs.unlink(`./public/${event.$relations.poster.path}`, (err)=>{
-      if(err) {
+    fs.unlink(`./public/${event.$relations.poster.path}`, (err) => {
+      if (err) {
         console.log("failed to delete local image:" + err);
-      } else{
+      } else {
         console.log('successfully deleted local image');
       }
     })
 
-    const poster=await Poster.query().where("event_id",event.id).first()
+    const poster = await Poster.query().where("event_id", event.id).first()
 
     poster.merge({
-      path:`resources/media/${pictureName}`
+      path: `resources/media/${pictureName}`
     })
     poster.save()
 
@@ -144,17 +144,17 @@ class EventController {
 
   }
 
-  async deleteEvent({response, params,organisation}){
+  async deleteEvent({response, params, organisation}) {
 
-    const event=await Event.query().where("events.id",params.event_id)
-      .whereHas("organisations", (b)=>{
-        b.where("organisations.id",organisation.id)
-    })
+    const event = await Event.query().where("events.id", params.event_id)
+      .whereHas("organisations", (b) => {
+        b.where("organisations.id", organisation.id)
+      })
       .first()
 
-    if(!event){
+    if (!event) {
       return response.notFound({
-        _message:"Event does not exist"
+        _message: "Event does not exist"
       })
     }
 
@@ -163,24 +163,98 @@ class EventController {
     return response.ok()
   }
 
-  async getEvents({request,response}){
-    const queryParams = request.only(['page','limit','search'])
+  async getEvents({request, response}) {
+    const queryParams = request.only(['page', 'limit', 'search','searchType'])
 
     let events = Event
       .query()
       .with('poster')
       .with('organisations')
 
-    if(queryParams.search && queryParams.search !==""){
-      events.where('name','LIKE',`%${queryParams.search}%`)
+    if (queryParams.search && queryParams.search !== "") {
+      if(queryParams.searchType === 'Organizacija'){
+        events.whereHas('organisations',(query)=>{
+          query.where('organisation_name','LIKE',`%${queryParams.search}%`)
+        })
+      }else if(queryParams.searchType === 'Grad'){
+        events.where('city','LIKE',`%${queryParams.search}%`)
+      }else{
+        events.where('name', 'LIKE', `%${queryParams.search}%`)
+      }
     }
 
-    events = await events.paginable(queryParams.page,queryParams.limit)
+    events = await events.orderBy('created_at', 'desc').paginable(queryParams.page, queryParams.limit)
 
     return response.ok(events)
   }
 
+  async getSingleEvent({response, params}) {
 
+    const events = await Event
+      .query()
+      .where('id', params.event_id)
+      .with('organisations')
+      .with('poster')
+      .with('comments')
+      .firstOrFail()
+
+    return response.ok(events)
+  }
+
+  async getEventsOfOrganisation({response, params}) {
+
+    const events = await Event
+      .query()
+      .where('organisation_id', params.organisation_id)
+      .with('organisations')
+      .with('poster')
+      .paginable(params.page, params.limit)
+
+    return response.ok(events)
+  }
+
+  async getFollowingOrganisationsEvents({request,response,user}){
+
+    const allParams = request.only(['page','limit'])
+    const events = await Event
+      .query()
+      .whereHas('organisations',(query)=>{
+        query.whereHas('followers',(query)=>{
+          query.where('users.id',user.id)
+        })
+      })
+      .with('poster')
+      .with('organisations')
+      .paginable(allParams)
+
+    return response.ok(events)
+  }
+
+  async commentEvent({request,response,user,params}){
+
+    const allParams = request.only(['comment'])
+
+    const validation = await validate(allParams,{
+      comment:'required|min:1'
+    })
+
+    if(validation.fails()){
+      return response.badRequest()
+    }
+
+    const event = await Event
+      .query()
+      .where('id',params.event_id)
+      .first()
+
+    if(!event){
+      return response.badRequest()
+    }
+
+    await event.comments().create({user_id: user.id, comment: allParams.comment})
+
+    return response.ok()
+  }
 
 }
 

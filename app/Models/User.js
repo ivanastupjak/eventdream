@@ -38,6 +38,14 @@ class User extends Model {
   events(){
     return this.belongsToMany('App/Models/Event').pivotModel('App/Models/EventUser')
   }
+
+  followedOrganisations(){
+    return this.belongsToMany('App/Models/Event').pivotModel('App/Models/Follow')
+  }
+
+  comments(){
+    return this.hasMany('App/Models/EventComment')
+  }
 }
 
 module.exports = User

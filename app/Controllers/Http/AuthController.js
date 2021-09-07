@@ -7,7 +7,7 @@ const Organisation = use('App/Models/Organisation')
 
 
 class AuthController {
-  //Test 2
+
   async registerUser({request, response}) {
 
     let registrationData = sanitize(request.post(), {

@@ -21,6 +21,10 @@ class Event extends Model {
     return this.belongsToMany('App/Models/User').pivotModel('App/Models/EventUser')
   }
 
+  comments(){
+    return this.hasMany('App/Models/EventComment')
+  }
+
 }
 
 module.exports = Event

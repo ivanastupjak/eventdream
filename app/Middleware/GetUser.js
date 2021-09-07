@@ -2,9 +2,8 @@
 const User = use('App/Models/User')
 
 class GetUser {
-
   async handle(ctx, next) {
-    // call next to advance the request
+
     const authHeader = ctx.auth.getAuthHeader()
 
     if (!authHeader) {

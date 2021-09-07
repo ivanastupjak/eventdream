@@ -15,6 +15,11 @@ class Organisation extends Model {
       }
     })
   }
+
+  followers(){
+    return this.belongsToMany('App/Models/User').pivotModel('App/Models/Follow')
+  }
+
 }
 
 module.exports = Organisation

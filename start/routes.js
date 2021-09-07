@@ -27,5 +27,13 @@ Route.group(()=>{
   Route.post('/edit/:event_id', 'EventController.editEvent').middleware(['getOrganisation'])
   Route.delete('/delete/:event_id', 'EventController.deleteEvent').middleware(['getOrganisation'])
   Route.get('/all','EventController.getEvents')
+  Route.get('/single/:event_id','EventController.getSingleEvent')
   Route.post('/confirmArrival','EventController')
+  Route.get('/organisation/:organisation_id','EventController.getEventsOfOrganisation')
+  Route.get('/following','EventController.getFollowingOrganisationsEvents').middleware(['getUser'])
+  Route.post('comment/:event_id','EventController.commentEvent').middleware(['getUser'])
 }).prefix('/api/event')
+
+Route.group(()=>{
+  Route.post('/followUnFollow/:organisation_id','OrganisationController.followUnFollow').middleware(['getUser'])
+}).prefix('/api/organisations')
