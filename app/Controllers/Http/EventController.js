@@ -29,6 +29,7 @@ class EventController {
 
     const eventPoster = request.file("event_poster", {
       types: ["image"],
+      extnames:['png','jpg'],
       size: "2mb"
     })
 
@@ -203,12 +204,14 @@ class EventController {
 
   async getEventsOfOrganisation({response, params}) {
 
-    const events = await Event
+    let events = await Event
       .query()
       .where('organisation_id', params.organisation_id)
       .with('organisations')
       .with('poster')
+      .orderBy('created_at', 'desc')
       .paginable(params.page, params.limit)
+
 
     return response.ok(events)
   }
